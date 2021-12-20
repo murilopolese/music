@@ -168,3 +168,16 @@ button {
 #music-list {
   overflow-y: scroll;
 }
+
+#scroll {
+  height: 1rem;
+  width: 100%;
+  background: var(--grey3);
+  cursor: pointer;
+}
+
+#scroll .cursor {
+  background: var(--accent);
+  height: 100%;
+  pointer-events: none;
+}

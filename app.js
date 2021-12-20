@@ -1,5 +1,9 @@
 import { render, html } from 'https://cdn.jsdelivr.net/npm/lit-html@1.4.1/lit-html.min.js'
 
+function map(x, in_min, in_max, out_min, out_max) {
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
 class Emitter extends EventTarget {
   on(eventName, callback) {
   	this.addEventListener(eventName, callback)
@@ -17,7 +21,8 @@ const state = {
   active: null,
   audio: null,
   playing: false,
-  searchTerm: ''
+  searchTerm: '',
+  cursorUpdate: 0
 }
 const emitter = new Emitter()
 
@@ -52,6 +57,20 @@ const MusicItem = function(opts) {
   `
 }
 
+const Cursor = function(opts) {
+  const { audio } = opts
+  let normalTime = 0;
+  if (audio) {
+    normalTime = map(audio.currentTime, 0, audio.duration, 0, 1)
+  }
+  return html`
+    <div
+    class="cursor"
+    style="width: ${normalTime*100}%"
+    ></div>
+  `
+}
+
 const App = function(state, emit) {
   if (!state.music) {
     emit('loadmusic')
@@ -69,7 +88,6 @@ const App = function(state, emit) {
     <body>
       <div id="app">
         <ul id="toolbar" class="row space-between space-tight">
-          <li id="logo">∀</li>
           <li id="search">
             <input
               type="text"
@@ -95,6 +113,12 @@ const App = function(state, emit) {
             </ul>
           </li>
         </ul>
+        <div id="scroll" @click=${(e) => emit('seek', e)}>
+          ${Cursor({
+            audio: state.audio,
+            click: (e) => emit('seek', e)
+          })}
+        </div>
         <ul id="music-list">
           ${state.music.filter(filterMusic).map((music, i) => MusicItem({
             title: music,
@@ -146,6 +170,10 @@ emitter.on('play', (e) => {
       emitter.emit('nextsong')
     })
   }
+  clearInterval(state.cursorUpdate)
+  state.cursorUpdate = setInterval(() => {
+    emitter.emit('render')
+  }, 500)
   state.audio.play()
   state.playing = true
   emitter.emit('render')
@@ -180,6 +208,16 @@ emitter.on('scrolltoitem', (e) => {
 })
 emitter.on('updatesearchtearm', (e) => {
   state.searchTerm = e.detail
+  emitter.emit('render')
+})
+emitter.on('seek', (e) => {
+  let scroll = e.detail.target
+  let bounds = scroll.getBoundingClientRect()
+  let x = e.detail.layerX
+  let ellapsedTime = map(x, 0, bounds.width, 0, 1)
+  if (state.audio) {
+    state.audio.currentTime = state.audio.duration * ellapsedTime
+  }
   emitter.emit('render')
 })
 
