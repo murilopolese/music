@@ -34,8 +34,8 @@ body {
   height: 30vw;
   background: #2b2b2b;
   border-radius: 0.5vw;
-  display: flex;
-  flex-direction: column;
+  /* display: flex;
+  flex-direction: column; */
   overflow: hidden;
 }
 
@@ -146,6 +146,7 @@ button {
 #toolbar {
   font-size: 1rem;
   padding: 0.5rem 1rem;
+  height: 8vw;
 }
 
 #logo {
@@ -167,10 +168,11 @@ button {
 
 #music-list {
   overflow-y: scroll;
+  height: 21vw;
 }
 
 #scroll {
-  height: 1rem;
+  height: 1vw;;
   width: 100%;
   background: var(--grey3);
   cursor: pointer;

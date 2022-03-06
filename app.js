@@ -1,7 +1,13 @@
 import { render, html } from 'https://cdn.jsdelivr.net/npm/lit-html@1.4.1/lit-html.min.js'
 
+// UTILITIES
 function map(x, in_min, in_max, out_min, out_max) {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
+function filterMusic(music) {
+  if (state.searchTerm.trim() === '') return true
+  return music.toLowerCase().indexOf(state.searchTerm.toLowerCase()) !== -1
 }
 
 class Emitter extends EventTarget {
@@ -14,6 +20,8 @@ class Emitter extends EventTarget {
   }
 }
 
+// STATE AND EVENT EMITTER
+const emitter = new Emitter()
 const state = {
   music: null,
   shuffle: false,
@@ -24,8 +32,8 @@ const state = {
   searchTerm: '',
   cursorUpdate: 0
 }
-const emitter = new Emitter()
 
+// COMPONENTS
 const ControlButton = function(opts, children) {
   const {
     active = false,
@@ -74,15 +82,7 @@ const Cursor = function(opts) {
 const App = function(state, emit) {
   if (!state.music) {
     emit('loadmusic')
-    return html`
-      <body>
-        Loading...
-      </body>
-    `
-  }
-  function filterMusic(music) {
-    if (state.searchTerm.trim() === '') return true
-    return music.toLowerCase().indexOf(state.searchTerm.toLowerCase()) !== -1
+    return html`<body>Loading...</body>`
   }
   return html`
     <body>
@@ -98,12 +98,6 @@ const App = function(state, emit) {
           </li>
           <li>
             <ul id="controls" class="row">
-              <!-- <li>
-                ${ControlButton(
-                  { click: () => emit('togglerepeat' ), active: state.repeat },
-                  '↫'
-                )}
-              </li> -->
               <li>
                 ${ControlButton(
                   { click: () => emit('shuffleplay' ) },
@@ -120,25 +114,27 @@ const App = function(state, emit) {
           })}
         </div>
         <ul id="music-list">
-          ${state.music.filter(filterMusic).map((music, i) => MusicItem({
-            title: music,
-            active: state.active === music,
-            playing: state.active === music && state.playing,
-            click: () => {
-              if (state.active === music && !state.audio.paused) {
-                emit('pause', music)
-              } else {
-                emit('play', music)
+          ${state.music.filter(filterMusic).map(
+            (music) => MusicItem({
+              title: music,
+              active: state.active === music,
+              playing: state.active === music && state.playing,
+              click: () => {
+                if (state.active === music && !state.audio.paused) {
+                  emit('pause', music)
+                } else {
+                  emit('play', music)
+                }
               }
-            }
-          }))}
+            })
+          )}
         </ul>
       </div>
     </body>
   `
 }
 
-
+// EVENT HANDLERS
 emitter.on('loadmusic', () => {
   fetch('/db.json')
     .then(r => r.json())
@@ -147,17 +143,14 @@ emitter.on('loadmusic', () => {
       emitter.emit('render')
     })
 })
-
 emitter.on('togglerepeat', () => {
   state.repeat = !state.repeat
   emitter.emit('render')
 })
-
 emitter.on('toggleshuffle', () => {
   state.shuffle = !state.shuffle
   emitter.emit('render')
 })
-
 emitter.on('play', (e) => {
   if (state.playing) {
     state.audio.pause()
@@ -187,8 +180,9 @@ emitter.on('pause', () => {
 })
 emitter.on('nextsong', () => {
   state.playing = false
-  const i = state.music.findIndex(m => m === state.active)
-  const music = state.music[(i+1) % state.music.length]
+  let filteredMusic = state.music.filter(filterMusic)
+  const i = filteredMusic.findIndex(m => m === state.active)
+  const music = filteredMusic[(i+1) % state.music.length]
   emitter.emit('play', music)
 })
 emitter.on('shuffleplay', () => {
@@ -220,7 +214,6 @@ emitter.on('seek', (e) => {
   }
   emitter.emit('render')
 })
-
 
 emitter.on('render', () => {
   render(
