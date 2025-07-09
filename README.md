@@ -1,25 +1,20 @@
-# Music Player
+# Banana Shark
 
-![](snapshot.png)
+![](bananashark.png)
 
-This is a simple implementation of a music player inspired by [this](https://dribbble.com/shots/989686-Rebound-Mini-UI-Player-Grooveshark/attachments/989686-Rebound-Mini-UI-Player-Grooveshark?mode=media).
+This is a web player for my personal mp3 library.
 
-Drop this files on a flat folder with your mp3/ogg/webm files and run:
+It contains a script for you to generate your own database based on the files inside a `music` folder at the root of this project. You will need node.js installed for that:
 
-```bash
-node generate.js
+```
+node generate-db.js
 ```
 
-This will generate a `db.json` file with a simple list of all files in that folder.
+To run the app run:
 
-```json
-{
-  "files": [
-    "filename.mp3",
-    "otherfile.mp3",
-    ...
-  ]
-}
+```
+npm install
+npm run dev
 ```
 
-Custom `db.json` can also be created pointing to external files, etc...
+And access the url that will show in the terminal.

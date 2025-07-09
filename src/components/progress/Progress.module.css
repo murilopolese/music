@@ -1,0 +1,60 @@
+.progress {
+    width: 100%;
+    height: 15px;
+    background-color: var(--grey);
+    cursor: pointer;
+    transition: all 0.5s;
+    transition-delay: 0.5s;
+    flex-shrink: 0;
+}
+
+.progress .bar {
+    height: 100%;
+    background-color: var(--accent);
+    pointer-events: none;
+}
+
+.progress.loading {
+  background-image: repeating-linear-gradient(-45deg, var(--darkgrey), var(--darkgrey) 25px, var(--grey) 25px, var(--grey) 50px);
+  -webkit-animation:progress 2s linear infinite;
+  -moz-animation:progress 2s linear infinite;
+  -ms-animation:progress 2s linear infinite;
+  animation:progress 2s linear infinite;
+  background-size: 150% 100%;
+}
+.progress.loading .bar {
+    opacity: 0.5;
+}
+
+@-webkit-keyframes progress{
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: -75px 0px;
+  }
+}
+@-moz-keyframes progress{
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: -75px 0px;
+  }
+}    
+@-ms-keyframes progress{
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: -75px 0px;
+  }
+}    
+@keyframes progress{
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: -70px 0px;
+  }
+} 

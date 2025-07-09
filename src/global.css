@@ -1,0 +1,31 @@
+/* https://dribbble.com/shots/989686-Rebound-Mini-UI-Player-Grooveshark/attachments/989686-Rebound-Mini-UI-Player-Grooveshark?mode=media */
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300;0,400;1,300;1,400&display=swap');
+
+* {
+  box-sizing: border-box;
+  font-family: 'Rubik', sans-serif;
+}
+
+:root {
+  font-size: 2vw;
+  --white: #ffffff;
+  --lightgrey: #dbdbdb;
+  --mediumgrey: #393939;
+  --grey: #464646;
+  --darkgrey: #2b2b2b;
+  --accent: #e07934;
+}
+
+body {
+  font-family: 'Rubik', sans-serif;
+  margin: 0;
+  background: var(--lightgrey);
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: var(--white);
+  font-size: 1rem;
+}
